@@ -4,7 +4,7 @@ const app = express();
 // ----------------------------------------
 // App Variables
 // ----------------------------------------
-app.locals.appName = "Passport";
+app.locals.appName = "Email and Social Media Aggregator";
 
 // ----------------------------------------
 // ENV
@@ -90,7 +90,7 @@ app.use(passport.session());
 // 1
 const User = require("./models/User");
 const mongoose = require("mongoose");
-mongoose.connect("mongodb://localhost/test");
+mongoose.connect("mongodb://localhost/test", {useMongoClient: true});
 
 // 2
 const LocalStrategy = require("passport-local").Strategy;

@@ -1,19 +1,19 @@
-'use strict';
+"use strict";
 
 //==================
 // home router
 //==================
 
-const Express = require('express');
+const Express = require("express");
 const router = Express.Router();
-const mongoose = require('mongoose');
-const User = require('./../models/User');
-const passport = require('passport');
+const mongoose = require("mongoose");
+const User = require("./../models/User");
+const passport = require("passport");
 
 // 1
-router.get('/', (req, res) => {
+router.get("/", (req, res) => {
   if (req.user) {
-    res.render('home', {
+    res.render("home", {
       user: req.user,
       picture: req.user.photoURL,
       summary: req.user.summary,
@@ -21,57 +21,49 @@ router.get('/', (req, res) => {
       googlePhotoUrl: req.user.googlePhotoUrl
     });
   } else {
-    res.redirect('/login');
+    res.redirect("/login");
   }
 });
 
 // 2
-router.get('/login', (req, res) => {
-  res.render('login');
+router.get("/login", (req, res) => {
+  res.render("login");
 });
 
-router.get('/register', (req, res) => {
-  res.render('register');
+router.get("/register", (req, res) => {
+  res.render("register");
 });
 
 // 3
 router.post(
-  '/login',
-  passport.authenticate('local', {
-    successRedirect: '/',
-    failureRedirect: '/login',
+  "/login",
+  passport.authenticate("local", {
+    successRedirect: "/",
+    failureRedirect: "/login",
     failureFlash: true
   })
 );
 
 // 4
 
-router.post('/register', (req, res, next) => {
-  const { email, password } = req.body;
+router.post("/register", (req, res, next) => {
+  const {email, password} = req.body;
 
-  if (req.session.passport.user) {
-    User.find({ _id: req.session.passport.user }, (err, objArr) => {
-      objArr[0].email = email;
-      objArr[0].password = password;
-      objArr[0].save();
-      res.redirect('/');
-    });
-  }
-  const user = new User({ email, password });
+  const user = new User({email, password});
   user.save((err, user) => {
     req.login(user, function(err) {
       if (err) {
         return next(err);
       }
-      return res.redirect('/');
+      return res.redirect("/");
     });
   });
 });
 
 // 5
-router.get('/logout', function(req, res) {
+router.get("/logout", function(req, res) {
   req.logout();
-  res.redirect('/');
+  res.redirect("/");
 });
 
 module.exports = router;
