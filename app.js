@@ -276,36 +276,42 @@ app.get(
 // Google Strategy
 // ----------------------------------------
 
-var GoogleStrategy = require("passport-google-oauth20").Strategy;
+var GoogleStrategy = require("passport-google-oauth2").Strategy;
 
 passport.use(
   new GoogleStrategy(
     {
       clientID: process.env.GOOGLE_CLIENT_ID,
       clientSecret: process.env.GOOGLE_CLIENT_SECRET,
-      callbackURL: "http://localhost:3000/auth/google/callback"
+      callbackURL: "http://localhost:3000/auth/google/callback",
+      passReqToCallback: true
     },
-    async function(accessToken, refreshToken, profile, done) {
+    async function(request, accessToken, refreshToken, profile, done) {
       try {
-        console.log(profile);
-        const googleId = profile.id;
-        const displayName = profile.displayName;
-        const email = profile.emails[0].value;
-        const googlePhotoUrl = profile.photos[0].value;
+        console.log("google passport profile =>", profile);
+        console.log("google passport refreshToken =>", refreshToken);
+        console.log("google passport accessToken =>", accessToken);
 
-        let user = await User.findOne({email}, (err, obj) => {
-          if (obj) {
-            obj.googleId = googleId;
-            obj.googlePhotoUrl = googlePhotoUrl;
-            obj.save();
-          }
-        });
-
-        if (!user) {
-          user = new User({email, displayName, googlePhotoUrl});
-          await user.save();
-        }
-        done(null, user);
+        console.log("request.body in the authentification =>", request.body);
+        // const googleId = profile.id;
+        // const displayName = profile.displayName;
+        // const email = profile.emails[0].value;
+        // const googlePhotoUrl = profile.photos[0].value;
+        //
+        // let user = await User.findOne({email}, (err, obj) => {
+        //   if (obj) {
+        //     obj.googleId = googleId;
+        //     obj.googlePhotoUrl = googlePhotoUrl;
+        //     obj.save();
+        //   }
+        // });
+        //
+        // if (!user) {
+        //   user = new User({email, displayName, googlePhotoUrl});
+        //   await user.save();
+        // }
+        // done(null, user);
+        done(null);
       } catch (err) {
         return done(err);
       }
@@ -313,12 +319,22 @@ passport.use(
   )
 );
 
-app.get(
-  "/auth/google",
-  passport.authenticate("google", {
-    scope: ["email"]
-  })
-);
+app.get("/auth/google", async (req, res, next) => {
+  try {
+    console.log("request.body in the path =>", request.body);
+
+    await passport.authenticate("google", {
+      scope: [
+        "https://www.googleapis.com/auth/gmail.readonly",
+        "https://www.googleapis.com/auth/gmail.modify",
+        "https://www.googleapis.com/auth/gmail.compose",
+        "profile"
+      ]
+    });
+  } catch (e) {
+    console.log("error at app.get /auth/google =>", e);
+  }
+});
 
 app.get(
   "/auth/google/callback",
