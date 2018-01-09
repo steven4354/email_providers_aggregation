@@ -1,0 +1,47 @@
+{
+  "name": "assignment_passport_scrapbook",
+  "version": "1.0.0",
+  "description": "Make an amalagam of user information gathered from a gallimaufry of OAuth providers.",
+  "main": "app.js",
+  "directories": {
+    "lib": "lib"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/edwinyung/assignment_passport_scrapbook.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/edwinyung/assignment_passport_scrapbook/issues"
+  },
+  "homepage": "https://github.com/edwinyung/assignment_passport_scrapbook#readme",
+  "dependencies": {
+    "bcrypt": "^1.0.3",
+    "body-parser": "^1.18.2",
+    "cookie-parser": "^1.4.3",
+    "cookie-session": "^2.0.0-beta.3",
+    "dotenv": "^4.0.0",
+    "express": "^4.16.2",
+    "express-flash-messages": "^0.1.1",
+    "express-handlebars": "^3.0.0",
+    "express-method-override-get-post-support": "^1.0.0",
+    "load-helpers": "^1.0.1",
+    "lodash": "^4.17.4",
+    "method-override": "^2.3.10",
+    "mongoose": "^4.13.7",
+    "mongoose-unique-validator": "^1.0.6",
+    "morgan": "^1.9.0",
+    "morgan-toolkit": "^1.0.2",
+    "passport": "^0.4.0",
+    "passport-facebook": "^2.1.1",
+    "passport-google-oauth": "^1.0.0",
+    "passport-google-oauth20": "^1.0.0",
+    "passport-linkedin-oauth2": "^1.5.0",
+    "passport-local": "^1.0.0",
+    "passport-twitter": "^1.0.4"
+  }
+}
