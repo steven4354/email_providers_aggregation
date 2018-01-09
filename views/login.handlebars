@@ -1,0 +1,56 @@
+<div class="container">
+  <div class="row">
+    <div class="col-sm-12">
+      <form method="post" action="/login">
+        <div class="form-group" method="post" action="/login">
+          <label for="email">Email address</label>
+          <input name="email" type="email" class="form-control" aria-describedby="emailHelp" placeholder="Enter email" id="email">
+          <small id="emailHelp" class="form-text text-muted">We'll never share your email with anyone else.</small>
+        </div>
+        <div class="form-group">
+          <label for="password">Password</label>
+          <input name="password" type="password" class="form-control" id="password">
+        </div>
+        <button type="submit" class="btn btn-primary">Submit</button>
+      </form>
+    </div>
+  </div>
+
+  <div style="margin-top: 15px" class="row">
+    <div class="col-sm-12">
+      <a href="/auth/facebook">
+        <span class="btn btn-primary">
+          Login with Facebook
+        </span>
+      </a>
+
+      <a href="/auth/linkedin">
+        <span class="btn btn-primary">
+          Login with Linkedin
+        </span>
+      </a>
+
+      <a href="/auth/twitter">
+        <span class="btn btn-primary">
+          Login with Twitter
+        </span>
+      </a>
+
+      <a href="/auth/google">
+        <span class="btn btn-primary">
+          Login with Google
+        </span>
+      </a>
+    </div>
+  </div>
+
+  <div style="margin-top: 15px" class="row">
+    <div class="col-sm-12">
+      <a href="/register">
+        <span class="btn btn-danger">
+          Register for an account
+        </span>
+      </a>
+    </div>
+  </div>
+</div>
