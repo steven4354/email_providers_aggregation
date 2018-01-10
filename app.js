@@ -140,9 +140,9 @@ passport.use(
     async function(request, accessToken, refreshToken, profile, done) {
       try {
         // uncomment below for debugging
-        // console.log("google passport profile =>", profile);
-        // console.log("google passport refreshToken =>", refreshToken);
-        // console.log("google passport accessToken =>", accessToken);
+        console.log("google passport profile =>", profile);
+        console.log("google passport refreshToken =>", refreshToken);
+        console.log("google passport accessToken =>", accessToken);
         //
         // console.log("request.User in the authentification =>", request.User);
         // console.log("request.user in the authentification =>", request.user);

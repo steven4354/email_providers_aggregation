@@ -17,3 +17,6 @@
     </a>
   </div>
 </div>;
+
+GOOGLE_CLIENT_ID=840548634127-qsnd8qikrttcc8blvlqugbfb2fc2s4ep.apps.googleusercontent.com
+GOOGLE_CLIENT_SECRET=1HAKzHUEYoY-s70eWdOFiN6S
