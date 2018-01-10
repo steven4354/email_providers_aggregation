@@ -12,20 +12,23 @@ Currently supported:
 Check out the deployed app at: https://email-api-aggregation.herokuapp.com/
 
 Picture 1
-![Alt text](./1.png?raw=true "Title")
+![Alt text](./demoimages/1.png?raw=true "Title")
 
 Picture 2
-![Alt text](./2.png?raw=true "Title")
+![Alt text](./demoimages/0.png?raw=true "Title")
 
 Picture 3
-![Alt text](./3.png?raw=true "Title")
+![Alt text](./demoimages/2.png?raw=true "Title")
 
 Picture 4
-Note on deployed version - because site is hosted on a herokuapp subdomain for demonstration purposes, browsers may tell you to proceed back. Feel free to press Advanced and proceed to site to test out application. Only a minimal amount of information is stored which are acccesstokens and email addresses for access to Google's API. Accesstokens will be set to expire in 1 hour.
-![Alt text](./4.png?raw=true "Title")
+![Alt text](./demoimages/3.png?raw=true "Title")
 
 Picture 5
-![Alt text](./5.png?raw=true "Title")
+Note on deployed version - because site is hosted on a herokuapp subdomain for demonstration purposes, browsers may tell you to proceed back. Feel free to press Advanced and proceed to site to test out application. Only a minimal amount of information is stored which are acccesstokens and email addresses for access to Google's API. Accesstokens will be set to expire in 1 hour.
+![Alt text](./demoimages/4.png?raw=true "Title")
+
+Picture 6
+![Alt text](./demoimages/5.png?raw=true "Title")
 
 
 ## Key Technologies Used and Technical Challenges 
