@@ -1,4 +1,4 @@
-# CryptoBase Source Code
+# API Aggregator
 
 Aggregates all your Email APIs into 1
 
