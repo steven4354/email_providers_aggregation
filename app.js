@@ -90,9 +90,16 @@ app.use(passport.session());
 // 1
 const User = require("./models/User");
 const mongoose = require("mongoose");
-mongoose.connect("mongodb://localhost/email-aggregation", {
+
+//production server
+mongoose.connect(process.env.MONGODB_URI, {
   useMongoClient: true
 });
+
+// unccomment to use development server
+// mongoose.connect("mongodb://localhost/email-aggregation", {
+//   useMongoClient: true
+// });
 
 // 2
 const LocalStrategy = require("passport-local").Strategy;
@@ -241,6 +248,10 @@ app.set("view engine", "handlebars");
 const port = process.env.PORT || process.argv[2] || 3000;
 const host = "localhost";
 
+// If we're in production we only need
+// the port in our args to the listen
+// function
+// else we can specify both in development
 let args;
 process.env.NODE_ENV === "production" ? (args = [port]) : (args = [port, host]);
 
