@@ -13,13 +13,6 @@ const passport = require("passport");
 // 1
 router.get("/", (req, res) => {
   if (req.user) {
-    res.render("home", {
-      user: req.user,
-      picture: req.user.photoURL,
-      summary: req.user.summary,
-      followers: req.user.followers,
-      googlePhotoUrl: req.user.googlePhotoUrl
-    });
   } else {
     res.redirect("/login");
   }

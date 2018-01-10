@@ -6,7 +6,7 @@ const UserSchema = mongoose.Schema({
   email: {type: String, required: false},
   username: {type: String, required: false, unique: true},
   passwordHash: {type: String, required: false},
-  googleId: {type: String, required: false},
+  googleAccessArray: [],
   googlePhotoUrl: {type: String, required: false}
 });
 

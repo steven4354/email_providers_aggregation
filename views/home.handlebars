@@ -14,3 +14,15 @@
     </div>
   </div>
 </div>
+
+<div class="container-fluid">
+  <div style="margin-top: 15px" class="row">
+    <h4> Your connected accounts </h4>
+    {{#each accounts }}
+    <div class="col-sm-12">
+      <img src={{photo}} />
+      {{email}}
+    </div>
+    {{/each}}
+  </div>
+</div>

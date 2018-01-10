@@ -139,33 +139,38 @@ passport.use(
     },
     async function(request, accessToken, refreshToken, profile, done) {
       try {
-        console.log("google passport profile =>", profile);
-        console.log("google passport refreshToken =>", refreshToken);
-        console.log("google passport accessToken =>", accessToken);
-
-        console.log("request.User in the authentification =>", request.User);
-        console.log("request.user in the authentification =>", request.user);
+        // uncomment below for debugging
+        // console.log("google passport profile =>", profile);
+        // console.log("google passport refreshToken =>", refreshToken);
+        // console.log("google passport accessToken =>", accessToken);
+        //
+        // console.log("request.User in the authentification =>", request.User);
+        // console.log("request.user in the authentification =>", request.user);
 
         const username = request.user.username;
+        const googlePhotoUrl =
+          "https://mindthegap.ng/wp-content/uploads/2017/11/gmail-login.png";
+        const email = profile.email;
+        const photo = profile.photos[0].value;
+        // uncomment below for debugging
+        // console.log("profile.photos => ", profile);
+
+        let newObj = {
+          photo: photo || googlePhotoUrl,
+          token: accessToken,
+          email: email
+        };
         // const googleId = profile.id;
         // const displayName = profile.displayName;
-        // const email = profile.emails[0].value;
-        // const googlePhotoUrl = profile.photos[0].value;
-        //
-        // let user = await User.findOne({email}, (err, obj) => {
-        //   if (obj) {
-        //     obj.googleId = googleId;
-        //     obj.googlePhotoUrl = googlePhotoUrl;
-        //     obj.save();
-        //   }
-        // });
-        //
-        // if (!user) {
-        //   user = new User({email, displayName, googlePhotoUrl});
-        //   await user.save();
-        // }
-        // done(null, user);
-        done(null);
+
+        let user = await User.findOne({username}, (err, obj) => {
+          if (obj) {
+            obj.googleAccessArray = [...obj.googleAccessArray, newObj];
+            obj.save();
+          }
+        });
+
+        done(null, user);
       } catch (err) {
         return done(err);
       }
@@ -185,22 +190,19 @@ app.get(
   "/auth/google",
   passport.authenticate("google", {
     scope: [
+      "https://www.googleapis.com/auth/userinfo.profile",
+      "https://www.googleapis.com/auth/userinfo.email",
       "https://www.googleapis.com/auth/gmail.readonly",
       "https://www.googleapis.com/auth/gmail.modify",
-      "https://www.googleapis.com/auth/gmail.compose",
-      "profile"
+      "https://www.googleapis.com/auth/gmail.compose"
     ]
   })
 );
 
 app.get("/auth/google/callback", async (req, res, next) => {
   try {
-    console.log("req =>", req);
-    //allows logging out of connected gmail
-    //after obtaining access token
-    //so that multiple accounts can be connected
-
-    // window.location = "https://mail.google.com/mail/u/0/?logout&hl=en";
+    // uncomment below for debugging
+    // console.log("req =>", req);
 
     await passport.authenticate("google", {
       successRedirect: "/",
