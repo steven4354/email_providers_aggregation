@@ -15,22 +15,37 @@ router.get("/", (req, res) => {
   console.log("entering path /");
 
   if (req.user) {
-    console.log("entering if of path /");
-    console.log("req.user =>", req.user);
-    console.log("req.user.username =>", req.user.username);
+    //uncomment for debugging
+    // console.log("entering if of path /");
+    // console.log("req.user =>", req.user);
+    // console.log("req.user.username =>", req.user.username);
 
-    User.findOne({username: req.user.username}, function(err, user) {
-      if (err) {
-        res.send(
-          "There is an error in your authentification please contact developer for details"
-        );
-      } else {
-        res.render("home", {
-          user: req.user,
-          accounts: user.googleAccessArray
-        });
+    User.findOne({username: req.user.username}, async (err, user) => {
+      try {
+        let s = {};
+        if (req.user.googleAccessArray.length > 0) {
+          const accessToken = user.googleAccessArray[0].token;
+          let Gmail = require("node-gmail-api");
+          let gmail = new Gmail(accessToken);
+          s = await gmail.messages("label:inbox", {max: 10});
+
+          await s.on("data", function(d) {
+            console.log("d.snippet =>", d.snippet);
+            console.log("d =>", d);
+          });
+
+          res.render("home", {
+            user: req.user,
+            accounts: user.googleAccessArray,
+            json: s
+          });
+        }
+      } catch (e) {
+        console.log(e);
       }
-    });
+    }); // end of User.find
+
+    //end of if statement
   } else {
     console.log("entering else of path /");
 
