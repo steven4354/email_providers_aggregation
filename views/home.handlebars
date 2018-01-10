@@ -9,14 +9,14 @@
     <div class="col-sm-12">
 
       <a href="/auth/accountclearing/google">
-        <span class="btn btn-primary">Click Here To Connect Your Gmail Account</span>
+        <span class="btn btn-primary">Click Here To Connect Your Gmail Accounts</span>
       </a>
     </div>
   </div>
 </div>
 
-<div class="container-fluid">
-    <h4> Your connected accounts </h4>
+<div style="margin-top: 15px" class="container-fluid">
+    <h4 > Your connected accounts </h4>
     {{#each accounts }}
     <div style="margin-top: 15px" class="row">
       <div class="col-sm-12">
@@ -27,11 +27,13 @@
     {{/each}}
 </div>
 
-<div class="container-fluid">
-    <h4> Your batched inbox </h4>
+<div style="margin-top: 15px" class="container-fluid">
+    <h4 > Your batched inbox (email #  : email snippet) </h4>
+    {{#each jsonObj }}
     <div style="margin-top: 15px" class="row">
       <div class="col-sm-12">
-        {{json}}
+        {{id}} : {{emailSnippet}}
       </div>
     </div>
+    {{/each}}
 </div>

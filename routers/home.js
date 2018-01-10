@@ -11,45 +11,105 @@ const User = require("./../models/User");
 const passport = require("passport");
 
 // 1
-router.get("/", (req, res) => {
-  console.log("entering path /");
+router.get("/", async (req, res) => {
+  try {
+    if (req.user) {
+      //uncomment for debugging
+      // console.log("entering if of path /");
+      // console.log("req.user =>", req.user);
+      // console.log("req.user.username =>", req.user.username);
+      let sessionStoredUser = req.user;
+      let jsonObj = {};
+      let eLogger = [];
 
-  if (req.user) {
-    //uncomment for debugging
-    // console.log("entering if of path /");
-    // console.log("req.user =>", req.user);
-    // console.log("req.user.username =>", req.user.username);
-
-    User.findOne({username: req.user.username}, async (err, user) => {
-      try {
-        let s = {};
-        if (req.user.googleAccessArray.length > 0) {
-          const accessToken = user.googleAccessArray[0].token;
+      for (
+        let i = 0;
+        i <= sessionStoredUser.googleAccessArray.length - 1;
+        i++
+      ) {
+        await new Promise(resolve => {
+          const accessToken = sessionStoredUser.googleAccessArray[i].token;
           let Gmail = require("node-gmail-api");
           let gmail = new Gmail(accessToken);
-          s = await gmail.messages("label:inbox", {max: 10});
+          let s = gmail.messages("label:inbox", {max: 10});
 
-          await s.on("data", function(d) {
-            console.log("d.snippet =>", d.snippet);
-            console.log("d =>", d);
+          s.on("data", function(d) {
+            console.log("d.id should appear before eLogger=>", d.id);
+            eLogger.push({
+              id: d.id,
+              emailSnippet: d.snippet
+            });
           });
 
-          res.render("home", {
-            user: req.user,
-            accounts: user.googleAccessArray,
-            json: s
+          s.on("end", function() {
+            resolve("break");
           });
-        }
-      } catch (e) {
-        console.log(e);
+        });
       }
-    }); // end of User.find
 
-    //end of if statement
-  } else {
-    console.log("entering else of path /");
+      console.log("eLogger should appear at the end =>", eLogger);
 
-    res.redirect("/login");
+      res.render("home", {
+        user: sessionStoredUser,
+        accounts: sessionStoredUser.googleAccessArray,
+        jsonObj: eLogger
+      });
+
+      /*
+      User.findOne({username: req.user.username}, async (err, user) => {
+        let jsonObj = {};
+
+        try {
+          //collecting the emails
+          if (user.googleAccessArray.length > 0) {
+            for (let i = 0; i < user.googleAccessArray.length; i++) {
+              const accessToken = user.googleAccessArray[i].token;
+              let Gmail = require("node-gmail-api");
+              let gmail = new Gmail(accessToken);
+              let s = await gmail.messages("label:inbox", {max: 10});
+
+              await s.on("data", function(d) {
+                // uncomment for email collection debugging
+                // console.log("d.snippet =>", d.snippet);
+                // console.log("d =>", d);
+                jsonObj[d.id] = d.snippet;
+                console.log("jsonObj inside if =>", jsonObj);
+              });
+
+              await s.on("end", function() {
+                res.render("home", {
+                  user: sessionStoredUser,
+                  accounts: user.googleAccessArray,
+                  jsonObj: JSON.stringify(jsonObj)
+                });
+              });
+            }
+          } else {
+            //end of email data collection
+            console.log("jsonObj in else =>", jsonObj);
+
+            res.render("home", {
+              user: sessionStoredUser,
+              accounts: user.googleAccessArray,
+              jsonObj: JSON.stringify(jsonObj)
+            });
+          }
+
+          //end of try
+        } catch (e) {
+          console.log(e);
+        }
+      }); // end of User.find
+
+      //end of if statement
+      */
+    } else {
+      console.log("entering else of path /");
+
+      res.redirect("/login");
+    }
+  } catch (e) {
+    console.log(e);
   }
 });
 
