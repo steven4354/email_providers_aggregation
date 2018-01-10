@@ -90,18 +90,22 @@ app.use(passport.session());
 // 1
 const User = require("./models/User");
 const mongoose = require("mongoose");
-mongoose.connect("mongodb://localhost/test", {useMongoClient: true});
+mongoose.connect("mongodb://localhost/email-aggregation", {
+  useMongoClient: true
+});
 
 // 2
 const LocalStrategy = require("passport-local").Strategy;
 
 // 3
 passport.use(
-  new LocalStrategy(function(email, password, done) {
-    User.findOne({email}, function(err, user) {
+  new LocalStrategy(function(username, password, done) {
+    console.log("username =>", username);
+    console.log("password =>", password);
+    User.findOne({username}, function(err, user) {
       if (err) return done(err);
       if (!user || !user.validPassword(password)) {
-        return done(null, false, {message: "Invalid email/password"});
+        return done(null, false, {message: "Invalid username/password"});
       }
       return done(null, user);
     });
@@ -118,159 +122,6 @@ passport.deserializeUser(function(id, done) {
     done(err, user);
   });
 });
-
-// ----------------------------------------
-// Facebook Passport
-// ----------------------------------------
-const FacebookStrategy = require("passport-facebook").Strategy;
-
-passport.use(
-  new FacebookStrategy(
-    {
-      clientID: process.env.FACEBOOK_APP_ID,
-      clientSecret: process.env.FACEBOOK_APP_SECRET,
-      callbackURL: "http://localhost:3000/auth/facebook/callback",
-      profileFields: ["id", "displayName", "photos", "emails"]
-    },
-
-    function(accessToken, refreshToken, profile, done) {
-      console.log("\x1b[34m", profile);
-
-      const facebookId = profile.id;
-      const displayName = profile.displayName;
-
-      const photoURL = profile.photos[0].value;
-      const email = profile.emails[0].value;
-
-      User.findOne({email}, function(err, user) {
-        if (err) return done(err);
-
-        if (!user) {
-          // Create a new account if one doesn't exist
-          user = new User({email, facebookId, displayName, photoURL});
-          user.save((err, user) => {
-            if (err) return done(err);
-            done(null, user);
-          });
-        } else {
-          // Otherwise, return the extant user.
-          user.facebookId = facebookId;
-          user.photoURL = photoURL;
-          user.save();
-          done(null, user);
-        }
-      });
-    }
-  )
-);
-
-app.get(
-  "/auth/facebook",
-  passport.authenticate("facebook", {
-    scope: ["email", "publish_actions", "user_photos"]
-  })
-);
-
-app.get(
-  "/auth/facebook/callback",
-  passport.authenticate("facebook", {
-    successRedirect: "/",
-    failureRedirect: "/login"
-  })
-);
-
-// ----------------------------------------
-// Linkedin Strategy
-// ----------------------------------------
-var LinkedInStrategy = require("passport-linkedin-oauth2").Strategy;
-
-passport.use(
-  new LinkedInStrategy(
-    {
-      clientID: process.env.LINKEDIN_KEY,
-      clientSecret: process.env.LINKEDIN_SECRET,
-      callbackURL: "http://localhost:3000/auth/linkedin/callback",
-      scope: ["r_emailaddress", "r_basicprofile"],
-      state: true
-    },
-    async function(accessToken, refreshToken, profile, done) {
-      try {
-        const linkedinId = profile.id;
-        const displayName = profile.displayName;
-        const summary = profile._json.summary;
-
-        const email = profile.emails[0].value;
-
-        let user = await User.findOne({email}, (err, obj) => {
-          if (obj) {
-            obj.linkedinId = linkedinId;
-            obj.summary = summary;
-            obj.save();
-          }
-        });
-
-        if (!user) {
-          user = new User({email, linkedinId, displayName, summary});
-          await user.save();
-        }
-        done(null, user);
-      } catch (err) {
-        return done(err);
-      }
-    }
-  )
-);
-
-app.get("/auth/linkedin", passport.authenticate("linkedin"));
-
-app.get(
-  "/auth/linkedin/callback",
-  passport.authenticate("linkedin", {
-    successRedirect: "/",
-    failureRedirect: "/login"
-  })
-);
-
-// ----------------------------------------
-// Twitter Strategy
-// ----------------------------------------
-
-var TwitterStrategy = require("passport-twitter").Strategy;
-
-passport.use(
-  new TwitterStrategy(
-    {
-      consumerKey: process.env.TWITTER_CONSUMER_KEY,
-      consumerSecret: process.env.TWITTER_CONSUMER_SECRET,
-      callbackURL: "http://localhost:3000/auth/twitter/callback"
-    },
-    async function(accessToken, refreshToken, profile, done) {
-      try {
-        console.log(profile);
-        const twitterId = profile.id;
-        const displayName = profile.displayName;
-        const followers = profile._json.followers_count;
-
-        let user = new User({twitterId, followers, displayName});
-        await user.save();
-
-        done(null, user);
-      } catch (err) {
-        return done(err);
-      }
-    }
-  )
-);
-
-app.get("/auth/twitter", passport.authenticate("twitter"));
-
-app.get(
-  "/auth/twitter/callback",
-  passport.authenticate("twitter", {
-    successRedirect: "/register",
-    failureRedirect: "/login"
-  })
-);
 
 // ----------------------------------------
 // Google Strategy
@@ -292,7 +143,10 @@ passport.use(
         console.log("google passport refreshToken =>", refreshToken);
         console.log("google passport accessToken =>", accessToken);
 
-        console.log("request.body in the authentification =>", request.body);
+        console.log("request.User in the authentification =>", request.User);
+        console.log("request.user in the authentification =>", request.user);
+
+        const username = request.user.username;
         // const googleId = profile.id;
         // const displayName = profile.displayName;
         // const email = profile.emails[0].value;
@@ -319,30 +173,43 @@ passport.use(
   )
 );
 
-app.get("/auth/google", async (req, res, next) => {
-  try {
-    console.log("request.body in the path =>", request.body);
-
-    await passport.authenticate("google", {
-      scope: [
-        "https://www.googleapis.com/auth/gmail.readonly",
-        "https://www.googleapis.com/auth/gmail.modify",
-        "https://www.googleapis.com/auth/gmail.compose",
-        "profile"
-      ]
-    });
-  } catch (e) {
-    console.log("error at app.get /auth/google =>", e);
-  }
+//remove the old gmail login
+//allowing new gmails to be added
+app.get("/auth/accountclearing/:accounttype", (req, res, next) => {
+  res.redirect(
+    "https://www.google.com/accounts/Logout?continue=https://appengine.google.com/_ah/logout?continue=http://localhost:3000/auth/google"
+  );
 });
 
 app.get(
-  "/auth/google/callback",
+  "/auth/google",
   passport.authenticate("google", {
-    successRedirect: "/",
-    failureRedirect: "/login"
+    scope: [
+      "https://www.googleapis.com/auth/gmail.readonly",
+      "https://www.googleapis.com/auth/gmail.modify",
+      "https://www.googleapis.com/auth/gmail.compose",
+      "profile"
+    ]
   })
 );
+
+app.get("/auth/google/callback", async (req, res, next) => {
+  try {
+    console.log("req =>", req);
+    //allows logging out of connected gmail
+    //after obtaining access token
+    //so that multiple accounts can be connected
+
+    // window.location = "https://mail.google.com/mail/u/0/?logout&hl=en";
+
+    await passport.authenticate("google", {
+      successRedirect: "/",
+      failureRedirect: "/login"
+    })(req, res, next);
+  } catch (e) {
+    console.log(e);
+  }
+});
 
 // ----------------------------------------
 // Redirect to Routers
@@ -368,6 +235,7 @@ app.set("view engine", "handlebars");
 // ----------------------------------------
 // Server
 // ----------------------------------------
+
 const port = process.env.PORT || process.argv[2] || 3000;
 const host = "localhost";
 

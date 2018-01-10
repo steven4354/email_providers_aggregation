@@ -47,9 +47,9 @@ router.post(
 // 4
 
 router.post("/register", (req, res, next) => {
-  const {email, password} = req.body;
+  const {username, password} = req.body;
 
-  const user = new User({email, password});
+  const user = new User({username, password});
   user.save((err, user) => {
     req.login(user, function(err) {
       if (err) {
