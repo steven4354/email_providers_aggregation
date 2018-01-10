@@ -24,7 +24,7 @@ Picture 4
 ![Alt text](./demoimages/3.png?raw=true "Title")
 
 Picture 5
-Note on deployed version - because site is hosted on a herokuapp subdomain for demonstration purposes, browsers may tell you to proceed back. Feel free to press Advanced and proceed to site to test out application. Only a minimal amount of information is stored which are acccesstokens and email addresses for access to Google's API. Accesstokens will be set to expire in 1 hour.
+Note on deployed version - since site is hosted on a herokuapp subdomain for demonstration purposes instead of a custom domain, browsers may tell you to proceed back. Feel free to press Advanced and Proceed to site if you'd like to utiize the Gmail functionalities. Only a minimal amount of information is stored which are acccesstokens and email addresses for access to Google's API. Accesstokens will be set to expire in 1 hour.
 ![Alt text](./demoimages/4.png?raw=true "Title")
 
 Picture 6
