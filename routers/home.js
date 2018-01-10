@@ -10,7 +10,7 @@ const mongoose = require("mongoose");
 const User = require("./../models/User");
 const passport = require("passport");
 
-// 1
+// 0
 router.get("/", async (req, res) => {
   try {
     if (req.user) {
@@ -54,60 +54,27 @@ router.get("/", async (req, res) => {
         accounts: sessionStoredUser.googleAccessArray,
         jsonObj: eLogger
       });
-
-      /*
-      User.findOne({username: req.user.username}, async (err, user) => {
-        let jsonObj = {};
-
-        try {
-          //collecting the emails
-          if (user.googleAccessArray.length > 0) {
-            for (let i = 0; i < user.googleAccessArray.length; i++) {
-              const accessToken = user.googleAccessArray[i].token;
-              let Gmail = require("node-gmail-api");
-              let gmail = new Gmail(accessToken);
-              let s = await gmail.messages("label:inbox", {max: 10});
-
-              await s.on("data", function(d) {
-                // uncomment for email collection debugging
-                // console.log("d.snippet =>", d.snippet);
-                // console.log("d =>", d);
-                jsonObj[d.id] = d.snippet;
-                console.log("jsonObj inside if =>", jsonObj);
-              });
-
-              await s.on("end", function() {
-                res.render("home", {
-                  user: sessionStoredUser,
-                  accounts: user.googleAccessArray,
-                  jsonObj: JSON.stringify(jsonObj)
-                });
-              });
-            }
-          } else {
-            //end of email data collection
-            console.log("jsonObj in else =>", jsonObj);
-
-            res.render("home", {
-              user: sessionStoredUser,
-              accounts: user.googleAccessArray,
-              jsonObj: JSON.stringify(jsonObj)
-            });
-          }
-
-          //end of try
-        } catch (e) {
-          console.log(e);
-        }
-      }); // end of User.find
-
-      //end of if statement
-      */
     } else {
       console.log("entering else of path /");
 
       res.redirect("/login");
     }
+  } catch (e) {
+    console.log(e);
+  }
+});
+
+// 1
+router.get("/refresh", async (req, res) => {
+  try {
+    let sessionStoredUser = req.user;
+    let username = sessionStoredUser.username;
+
+    let user = await User.findOne({username});
+    user.googleAccessArray = [];
+    await user.save();
+
+    res.redirect("/");
   } catch (e) {
     console.log(e);
   }
