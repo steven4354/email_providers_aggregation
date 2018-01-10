@@ -12,8 +12,28 @@ const passport = require("passport");
 
 // 1
 router.get("/", (req, res) => {
+  console.log("entering path /");
+
   if (req.user) {
+    console.log("entering if of path /");
+    console.log("req.user =>", req.user);
+    console.log("req.user.username =>", req.user.username);
+
+    User.findOne({username: req.user.username}, function(err, user) {
+      if (err) {
+        res.send(
+          "There is an error in your authentification please contact developer for details"
+        );
+      } else {
+        res.render("home", {
+          user: req.user,
+          accounts: user.googleAccessArray
+        });
+      }
+    });
   } else {
+    console.log("entering else of path /");
+
     res.redirect("/login");
   }
 });

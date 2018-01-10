@@ -4,7 +4,7 @@ const app = express();
 // ----------------------------------------
 // App Variables
 // ----------------------------------------
-app.locals.appName = "Email and Social Media Aggregator";
+app.locals.appName = "Email API Aggregator";
 
 // ----------------------------------------
 // ENV
