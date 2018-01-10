@@ -141,7 +141,8 @@ passport.use(
     {
       clientID: process.env.GOOGLE_CLIENT_ID,
       clientSecret: process.env.GOOGLE_CLIENT_SECRET,
-      callbackURL: "http://localhost:3000/auth/google/callback",
+      callbackURL:
+        "https://email-api-aggregation.herokuapp.com/auth/google/callback", //for development http://localhost:3000/auth/google/callback
       passReqToCallback: true
     },
     async function(request, accessToken, refreshToken, profile, done) {
@@ -189,7 +190,7 @@ passport.use(
 //allowing new gmails to be added
 app.get("/auth/accountclearing/:accounttype", (req, res, next) => {
   res.redirect(
-    "https://www.google.com/accounts/Logout?continue=https://appengine.google.com/_ah/logout?continue=http://localhost:3000/auth/google"
+    "https://www.google.com/accounts/Logout?continue=https://appengine.google.com/_ah/logout?continue=https://email-api-aggregation.herokuapp.com/auth/google" //for development, continue= http://localhost:3000/auth/google
   );
 });
 
