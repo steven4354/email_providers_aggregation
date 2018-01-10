@@ -72,6 +72,3 @@ Run the application
 nodemon app.js
 ```
 
-## Found Bugs (to be fixed!)
-Note on deployed version - because it is hosted on a herokuapp subdomain, browsers may tell you to proceed back. This is normal,
-and feel free to press Advanced and proceed to site to continue. The only information stored are acccesstokens and emails. Accesstokens will expire in 1 hour.
